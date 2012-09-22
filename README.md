@@ -1,13 +1,13 @@
-OTRSAdminSelectBoxSqlQueryHistory
+OTRSSqlQueriesHistory
 =====
 
-'OTRS 3 package extends AdminSelectBox module for storing SQL queries history'
-
+OTRS 3 package extends AdminSelectBox module for storing SQL queries history
 
 
 TODO - Develpment Notes
 -----
- * add src directory do package with needed files
+ + usable prototype [OK]
+ + add src directory do package with needed files [OK]
  * add config and version 0.0.1 for package
  * debug + console.log JS - faster init method for JS in AdminSelectBox
  * build package in first version
