@@ -1,16 +1,28 @@
 OTRSSqlQueriesHistory
 =====
 
-OTRS 3 package extends AdminSelectBox module for storing SQL queries history
+This is OTRS 3 package witch extends AdminSelectBox module for storing SQL queries history.
+OTRS administrators can show and reusing SQL queries from queries history log.
+Solution using webbrowser local storage mechanism on client side - no need additional table in OTRS database.
+
+
+How to install package in OTRS 3 ?
+----------------------------------
+
+from console:
+/opt/otrs/$ perl bin/otrs.PackageManager.pl -a install -p ./OTRSSqlQueriesHistory.opm
+
+from admin panel:
+http://OTRS-LOCATION/otrs/index.pl?Action=AdminPackageManager
 
 
 TODO - Develpment Notes
------
+-----------------------
  + usable prototype [OK]
  + add src directory do package with needed files [OK]
- * add config and version 0.0.1 for package
+ * add config and version 0.0.1 for package [OK]
+ * build package in first version [OK]
  * debug + console.log JS - faster init method for JS in AdminSelectBox
- * build package in first version
  * response in OTRS IdeaScale thread about history of SQL queries
  * add package to OPAR
  * promote package on OTRS forum

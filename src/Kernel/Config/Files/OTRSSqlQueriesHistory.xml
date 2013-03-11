@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<otrs_config version="1.0" init="Application">
+    <CVS>$Id: OTRSSqlQueriesHistory.xml,v 1.0.0.0 2012/09/22 21:12:2 bieli Exp $</CVS>
+    <ConfigItem Name="Frontend::Module###AdminSelectBox" Required="0" Valid="1">
+        <Description Translatable="1">Frontend module registration for the agent interface.</Description>
+        <Group>Framework</Group>
+        <SubGroup>Frontend::Admin::ModuleRegistration</SubGroup>
+        <Setting>
+            <FrontendModuleReg>
+                <Group>admin</Group>
+                <Description>Admin</Description>
+                <Title>SQL Box</Title>
+                <NavBarName>Admin</NavBarName>
+                <NavBarModule>
+                    <Module>Kernel::Output::HTML::NavBarModuleAdmin</Module>
+                    <Name Translatable="1">SQL Box</Name>
+                    <Description Translatable="1">Execute SQL statements.</Description>
+                    <Block>System</Block>
+                    <Prio>700</Prio>
+                </NavBarModule>
+                <Loader>
+                    <JavaScript>thirdparty/jstorage/jstorage.js</JavaScript>
+                    <JavaScript>Core.Agent.Admin.AdminSelectBox.js</JavaScript>
+                </Loader>
+            </FrontendModuleReg>
+        </Setting>
+    </ConfigItem>
+</otrs_config>
+
