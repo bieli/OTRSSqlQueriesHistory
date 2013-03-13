@@ -28,69 +28,100 @@ Core.Agent.Admin.AdminSelectBox = (function (TargetNS) {
     };
 
     function loadList() {
-        var sql_queries = $.jStorage.get('otrs_sql_queries_history');    
-            if (sql_queries) {
-                var last = "";
-                var item = 1;
+        var sql_queries = [];
+        var query = '';
+        var timestamp = '';
 
-                sql_queries.forEach( function(k, v) { 
+        Object.keys(localStorage)
+            .forEach(function(key){
+                if (/^(otrs::)/.test(key)) {
+                   query = localStorage.getItem(key);
 
+                   sql_queries.push({ 'timestamp' : key.substring('otrs::sql_log_'.length, key.length), 'query' : query });
+                }
+        });
+
+        if (sql_queries) {
+            var last = "";
+            var item = 1;
+
+            sql_queries.forEach( function(k, v) { 
                 if ( last != k.query ) {
                   $('ul#sql_queries').append(
                       $('<li>')
-                          .text(k.query.slice(0, 30) + ' [..] ')
-                          .attr('title', k.query)
-                          .append(
-                              $('<button>')
-                                  .attr('id', 'sqh_btn_' + item)
-                                  .attr('class', 'sqh_btn')
-                                  .attr('style', 'height: 22px; width: 22px; font-size: 14px;')
-                                  .attr('name', 'sqh_btn_' + item)
-                                  .attr('data-timestamp', k.timestamp)
-                                  .attr('data-query', k.query)
-                                  .text("⇒")
-                          )
                           .append(
                               $('<button>')
                                   .attr('id', 'sqh_btn_delete_' + item)
                                   .attr('class', 'sqh_btn')
-                                  .attr('style', 'height: 22px; width: 22px; font-size: 14px;')
+                                  .attr('style', 'height: 20px; width: 20px; font-size: 12px; color: red;')
                                   .attr('name', 'sqh_btn_delete_' + item)
                                   .attr('data-timestamp', k.timestamp)
+                                  .attr('onClick', 'Core.Agent.Admin.AdminSelectBox.removeSqlLogItem(' + k.timestamp + ', ' + item + ')')
                                   .text("x")
-                  ));
+                          )
+                          .append(
+                              $('<button>')
+                                  .attr('id', 'sqh_btn_' + item)
+                                  .attr('class', 'sqh_btn')
+                                  .attr('style', 'height: 20px; width: 20px; font-size: 12px; color: green;')
+                                  .attr('name', 'sqh_btn_' + item)
+                                  .attr('data-timestamp', k.timestamp)
+                                  .attr('onClick', "Core.Agent.Admin.AdminSelectBox.useLogItem('" + k.timestamp + "')")
+                                  .text("⇒")
+                          )
+                          .append(
+                              $('<span>')
+                                  .text(' ' + k.query.slice(0, 30) + ' [..]')
+                                  .attr('title', k.query)
+                          )
+                  );
 
                   last = k.query;
                   item++;
-                }
-            });
+              }
+        });
         }
     };
 
-    function updateList(sql_query) {
-        var sql_queries = $.jStorage.get('otrs_sql_queries_history');    
-        var milliseconds = +new Date().getTime();
-        var result = true;
+/*
+  Object.keys(localStorage)
+      .forEach(function(key){
+           if (/^(otrs::)/.test(key)) {
+               localStorage.removeItem(key);
+           }
+       });
 
-        if (sql_queries) {
-            result = false;
 
-            sql_queries.forEach( function(k, v) { 
-                if ( sql_query.trim() == k.query.trim() ) {
-                    result = true;
-                }
-            });
 
-        } else {
-            result = false;
-            sql_queries = [];
-        }
-        
-        if ( result == false ) {
-            sql_queries.push({ 'timestamp' : milliseconds, 'query' : sql_query.trim() });
+    Object.keys(localStorage) 
+        .forEach(function(key){ 
+            if (key.substring(0,myLength) == startsWith) {
+                localStorage.removeItem(key); 
+            } 
+        }); 
+*/
 
-            $.jStorage.set('otrs_sql_queries_history', sql_queries);
-        }
+    function addSqlLogItem(sql_query) {
+        var timestamp = +new Date().getTime();
+console.log('addSqlLogItem: ', timestamp, sql_query);
+        localStorage.setItem('otrs::sql_log_' + timestamp, sql_query);
+    };
+
+    TargetNS.useLogItem = function (timestamp) {
+          var sql_query = localStorage.getItem('otrs::sql_log_' + timestamp);
+console.log('useLogItem: ', sql_query);
+
+          sql_query_arr = sql_query.split(" LIMIT ");
+console.log('useLogItem split: ', sql_query_arr);
+
+          $('#SQL').val(sql_query_arr[0]);
+          $('#Max').val(sql_query_arr[1]);
+    };
+
+    TargetNS.removeSqlLogItem = function (timestamp, item) {
+console.log('removeSqlLogItem: ', timestamp, item);
+        var sql_query = localStorage.removeItem('otrs::sql_log_' + timestamp, sql_query);
+        $("#sqh_btn_delete_" + item).parent().remove(); 
     };
 
     /**
@@ -100,27 +131,32 @@ Core.Agent.Admin.AdminSelectBox = (function (TargetNS) {
      */
     TargetNS.Init = function () {
         $('#Run').unbind('click').click( function (){
-            var milliseconds = +new Date().getTime();
-
             var sql_query = $('#SQL').val().trim() + " LIMIT " + $('#Max').val().trim();
-
-            updateList(sql_query);
-
-            loadList();
-        });
             
-        $('ul#sql_queries li button[id^="sqh_btn_"]').unbind('click').click( function (){
-            var sql_query = $(this).data("query");
+            if ( sql_query.length > 0 ) {
+                addSqlLogItem(sql_query);
+            }
+        });
+/*
+
+if(result==false){var milliseconds=+new Date().getTime();sql_queries.push({'timestamp':milliseconds,'query':sql_query.trim()});$.jStorage.set('otrs_sql_queries_history',sql_queries);}};function deleteQueryLog(sql_query_timestamp){console.log('- a',sql_query_timestamp);var sql_queries_new=[];var sql_queries=$.jStorage.get('otrs_sql_queries_history');if(sql_queries){car item=0;sql_queries.forEach(function(k,v){if(sql_query_timestamp.toString()==k.timestamp.toString()){delete sql_queries[item];}
+
+        $('ul#sql_queries li button[id^="sqh_btn_"]').click( function (){
+            var timestamp = $(this).data("timestamp");
+
+            var sql_query = localStorage.getItem('otrs::sql_log_' + timestamp, sql_query),
 
             $('#SQL').val(sql_query);
-
-            loadList();
         });
 
-        $('ul#sql_queries li button[id^="sqh_btn_delete_"]').unbind('click').click( function (){
+        $('ul#sql_queries li button[id^="sqh_btn_delete_"]').click( function (){
+            var timestamp = $(this).data("timestamp");
+
+            var sql_query = localStorage.removeItem('otrs::sql_log_' + timestamp, sql_query),
+
             $(this).parent().remove();
         });
-
+*/
         addBlock();
 
         loadList();
@@ -130,4 +166,6 @@ Core.Agent.Admin.AdminSelectBox = (function (TargetNS) {
 }(Core.Agent.Admin.AdminSelectBox || {}));
 
 Core.Agent.Admin.AdminSelectBox.Init();
+
+//$.jStorage.flush();
 
