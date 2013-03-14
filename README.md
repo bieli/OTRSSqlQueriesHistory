@@ -6,6 +6,9 @@ OTRS administrators can show and reusing SQL queries from queries history log.
 Solution using webbrowser local storage mechanism on client side - no need additional table in OTRS database.
 
 
+![ScreenShot](https://github.com/bieli/OTRSSqlQueriesHistory/raw/master/src/OTRSSqlQueriesHistory.png)
+
+
 How to install package in OTRS 3 ?
 ----------------------------------
 
