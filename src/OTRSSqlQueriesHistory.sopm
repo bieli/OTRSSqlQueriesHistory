@@ -7,8 +7,8 @@
     <Vendor>bieli.net</Vendor>
     <URL>http://bieli.net/</URL>
     <License>This source code is published under GPL v3 licence</License>
-    <Description Lang="en">This OTRS 3 package extends AdminSelectBox module for storing SQL queries history.</Description>
-    <Description Lang="pl">Moduł ten rozszerza moduł AdminSelectBox o składowanie historii zapytań SQL.</Description>
+    <Description Lang="en">This OTRS 3 package extends AdminSelectBox module for storing SQL queries history (on client/webbrowser side - localStorage).</Description>
+    <Description Lang="pl">To rozszerzenie OTRS 3 rozszerza moduł AdminSelectBox o składowanie historii zapytań SQL (po stronie klienta/przeglądarki - localStorage).</Description>
     <Filelist>
         <File Permission="666" Location="Kernel/Config/Files/OTRSSqlQueriesHistory.xml"/>
         <File Permission="666" Location="var/httpd/htdocs/js/Core.Agent.Admin.AdminSelectBox.js"/>

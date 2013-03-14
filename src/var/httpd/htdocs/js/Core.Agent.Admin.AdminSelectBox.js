@@ -23,12 +23,32 @@ Core.Agent.Admin = Core.Agent.Admin || {};
  */
 Core.Agent.Admin.AdminSelectBox = (function (TargetNS) {
 
+    function onlyUniqueValues(sql_queries_ls) {
+        var set = {};
+        var set2 = [];
+
+        for (var i = 0; i < sql_queries_ls.length; i++) {
+            set[sql_queries_ls[i].query] = 1;
+            set2[i] = sql_queries_ls[i].timestamp;
+        }
+
+        var sql_queries = [];
+
+        i = 0;
+
+        for(var key in set) {
+            sql_queries.push({ timestamp: set2[i++], query: key });
+        }
+
+        return sql_queries;
+    }
+
     function addBlock() {
         $('div.SidebarColumn').append('<div class="WidgetSimple"><div class="Header"><h2>SQL Queries History</h2></div><div class="Content"><p><ul id="sql_queries"></ul></p></div></div>');
     };
 
     function loadList() {
-        var sql_queries = [];
+        var sql_queries_ls = [];
         var query = '';
         var timestamp = '';
 
@@ -37,9 +57,13 @@ Core.Agent.Admin.AdminSelectBox = (function (TargetNS) {
                 if (/^(otrs::)/.test(key)) {
                    query = localStorage.getItem(key);
 
-                   sql_queries.push({ 'timestamp' : key.substring('otrs::sql_log_'.length, key.length), 'query' : query });
+                   sql_queries_ls.push({ timestamp: key.substring('otrs::sql_log_'.length, key.length), query: query });
                 }
         });
+
+        sql_queries = onlyUniqueValues(sql_queries_ls);
+
+//console.log(sql_queries);
 
         if (sql_queries) {
             var last = "";
@@ -83,43 +107,25 @@ Core.Agent.Admin.AdminSelectBox = (function (TargetNS) {
         }
     };
 
-/*
-  Object.keys(localStorage)
-      .forEach(function(key){
-           if (/^(otrs::)/.test(key)) {
-               localStorage.removeItem(key);
-           }
-       });
-
-
-
-    Object.keys(localStorage) 
-        .forEach(function(key){ 
-            if (key.substring(0,myLength) == startsWith) {
-                localStorage.removeItem(key); 
-            } 
-        }); 
-*/
-
     function addSqlLogItem(sql_query) {
         var timestamp = +new Date().getTime();
-console.log('addSqlLogItem: ', timestamp, sql_query);
+//console.log('addSqlLogItem: ', timestamp, sql_query);
         localStorage.setItem('otrs::sql_log_' + timestamp, sql_query);
     };
 
     TargetNS.useLogItem = function (timestamp) {
           var sql_query = localStorage.getItem('otrs::sql_log_' + timestamp);
-console.log('useLogItem: ', sql_query);
+//console.log('useLogItem: ', sql_query);
 
           sql_query_arr = sql_query.split(" LIMIT ");
-console.log('useLogItem split: ', sql_query_arr);
+//console.log('useLogItem split: ', sql_query_arr);
 
           $('#SQL').val(sql_query_arr[0]);
           $('#Max').val(sql_query_arr[1]);
     };
 
     TargetNS.removeSqlLogItem = function (timestamp, item) {
-console.log('removeSqlLogItem: ', timestamp, item);
+//console.log('removeSqlLogItem: ', timestamp, item);
         var sql_query = localStorage.removeItem('otrs::sql_log_' + timestamp, sql_query);
         $("#sqh_btn_delete_" + item).parent().remove(); 
     };
@@ -137,26 +143,7 @@ console.log('removeSqlLogItem: ', timestamp, item);
                 addSqlLogItem(sql_query);
             }
         });
-/*
 
-if(result==false){var milliseconds=+new Date().getTime();sql_queries.push({'timestamp':milliseconds,'query':sql_query.trim()});$.jStorage.set('otrs_sql_queries_history',sql_queries);}};function deleteQueryLog(sql_query_timestamp){console.log('- a',sql_query_timestamp);var sql_queries_new=[];var sql_queries=$.jStorage.get('otrs_sql_queries_history');if(sql_queries){car item=0;sql_queries.forEach(function(k,v){if(sql_query_timestamp.toString()==k.timestamp.toString()){delete sql_queries[item];}
-
-        $('ul#sql_queries li button[id^="sqh_btn_"]').click( function (){
-            var timestamp = $(this).data("timestamp");
-
-            var sql_query = localStorage.getItem('otrs::sql_log_' + timestamp, sql_query),
-
-            $('#SQL').val(sql_query);
-        });
-
-        $('ul#sql_queries li button[id^="sqh_btn_delete_"]').click( function (){
-            var timestamp = $(this).data("timestamp");
-
-            var sql_query = localStorage.removeItem('otrs::sql_log_' + timestamp, sql_query),
-
-            $(this).parent().remove();
-        });
-*/
         addBlock();
 
         loadList();
@@ -166,6 +153,4 @@ if(result==false){var milliseconds=+new Date().getTime();sql_queries.push({'time
 }(Core.Agent.Admin.AdminSelectBox || {}));
 
 Core.Agent.Admin.AdminSelectBox.Init();
-
-//$.jStorage.flush();
 
