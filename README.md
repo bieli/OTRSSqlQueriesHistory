@@ -25,8 +25,8 @@ TODO - Develpment Notes
  + add src directory do package with needed files [OK]
  * add config and version 0.0.1 for package [OK]
  * build package in first version [OK]
- * debug + console.log JS - faster init method for JS in AdminSelectBox
- * response in OTRS IdeaScale thread about history of SQL queries
+ * debug + console.log JS - faster init method for JS in AdminSelectBox [OK]
+ * response in OTRS IdeaScale thread about history of SQL queries [OK]
  * add package to OPAR
  * promote package on OTRS forum
  * try contribute this future into OTRS 3.0 and OTRS 3.1 developers branches
